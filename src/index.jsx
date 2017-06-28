@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const propTypes = {
   signingUrl: PropTypes.string.isRequired,
-  preprocess: PropTypes.func.isRequired,
+  preprocess: PropTypes.func,
   onFinish: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   signingUrlHeaders: PropTypes.instanceOf(Object),
@@ -13,7 +13,8 @@ const propTypes = {
 
 const defaultProps = {
   signingUrlHeaders: {},
-  uploadUrlHeaders: {}
+  uploadUrlHeaders: {},
+  preprocess: (file, next) => next(file)
 };
 
 class ReactS3Uploader extends Component {
@@ -30,19 +31,18 @@ class ReactS3Uploader extends Component {
       },
       headers: signingUrlHeaders
     };
+
     axios.get(signingUrl, options)
-    .then((res) => {
-      const { ok } = (res && res.data) || {};
+      .then((res) => {
+        const { ok } = (res && res.data) || {};
 
-      if (!ok) {
-        return onError(res);
-      }
+        if (!ok) {
+          return onError(res);
+        }
 
-      return this.uploadFile(file, res.data);
-    })
-    .catch((err) => {
-      onError(err);
-    });
+        return this.uploadFile(file, res.data);
+      })
+      .catch(err => onError(err));
   }
 
   uploadFile = (file, signingResult) => {
@@ -50,12 +50,8 @@ class ReactS3Uploader extends Component {
     const { signedUrl } = signingResult;
 
     return axios.put(signedUrl, file, { headers: uploadUrlHeaders })
-    .then(() => {
-      onFinish(signingResult);
-    })
-    .catch((err) => {
-      onError(err);
-    });
+      .then(() => onFinish(signingResult))
+      .catch(err => onError(err));
   }
 
   handleUpload = () => {
