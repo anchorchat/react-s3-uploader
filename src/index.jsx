@@ -20,7 +20,6 @@ const defaultProps = {
 class ReactS3Uploader extends Component {
   getSigningUrl = (file) => {
     const { onError, signingUrlHeaders, signingUrl } = this.props;
-
     const objectName = file.name || '';
     const contentType = file.type || '';
 
@@ -32,7 +31,7 @@ class ReactS3Uploader extends Component {
       headers: signingUrlHeaders
     };
 
-    axios.get(signingUrl, options)
+    return axios.get(signingUrl, options)
       .then((res) => {
         const { ok } = (res && res.data) || {};
 
@@ -56,10 +55,9 @@ class ReactS3Uploader extends Component {
 
   handleUpload = () => {
     const { preprocess } = this.props;
-
     const file = this.input.files[0] || {};
 
-    preprocess(file, this.getSigningUrl);
+    return preprocess(file, this.getSigningUrl);
   }
 
   render() {
