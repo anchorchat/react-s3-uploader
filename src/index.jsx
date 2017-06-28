@@ -17,10 +17,12 @@ const defaultProps = {
   preprocess: (file, next) => next(file)
 };
 
+const scrubFilename = filename => filename.replace(/[^\w\d_\-.]+/ig, '');
+
 class ReactS3Uploader extends Component {
   getSigningUrl = (file) => {
     const { onError, signingUrlHeaders, signingUrl } = this.props;
-    const objectName = file.name || '';
+    const objectName = scrubFilename(file.name);
     const contentType = file.type || '';
 
     const options = {
