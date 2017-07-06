@@ -57,10 +57,10 @@ class ReactS3Uploader extends Component {
 
   handleUpload = () => {
     const { preprocess } = this.props;
-    const file = this.input.files[0];
+    const files = this.input && this.input.files || [];
 
-    if (file) {
-      preprocess(file, this.getSigningUrl);
+    if (files.length === 1) {
+      preprocess(files[0], this.getSigningUrl);
     }
   }
 
