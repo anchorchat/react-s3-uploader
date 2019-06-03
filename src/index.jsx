@@ -35,14 +35,14 @@ class ReactS3Uploader extends Component {
     };
 
     return axios.get(signingUrl, options)
-      .then((res) => {
-        const { ok } = (res && res.data) || {};
+      .then((result) => {
+        const { ok } = get(result, 'data', {});
 
         if (!ok) {
-          return onError(res);
+          return onError(result);
         }
 
-        return this.uploadFile(file, res.data);
+        return this.uploadFile(file, result.data);
       })
       .catch(err => onError(err));
   }
