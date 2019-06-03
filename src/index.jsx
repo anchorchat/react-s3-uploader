@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import get from 'lodash/get';
 
 const propTypes = {
   signingUrl: PropTypes.string.isRequired,
@@ -57,7 +58,7 @@ class ReactS3Uploader extends Component {
 
   handleUpload = () => {
     const { preprocess } = this.props;
-    const files = this.input && this.input.files || [];
+    const files = get(this, 'input.files', []);
 
     if (files.length === 1) {
       preprocess(files[0], this.getSigningUrl);
