@@ -44,7 +44,7 @@ class ReactS3Uploader extends Component {
 
         return this.uploadFile(file, result.data);
       })
-      .catch(err => onError(err));
+      .catch(error => onError(error));
   }
 
   uploadFile = (file, signingResult) => {
@@ -53,7 +53,7 @@ class ReactS3Uploader extends Component {
 
     return axios.put(signedUrl, file, { headers: uploadUrlHeaders })
       .then(() => onFinish(signingResult))
-      .catch(err => onError(err));
+      .catch(error => onError(error));
   }
 
   handleUpload = () => {
