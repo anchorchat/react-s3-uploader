@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import get from 'lodash/get';
 
 const propTypes = {
   signingUrl: PropTypes.string.isRequired,
@@ -34,16 +35,16 @@ class ReactS3Uploader extends Component {
     };
 
     return axios.get(signingUrl, options)
-      .then((res) => {
-        const { ok } = (res && res.data) || {};
+      .then((result) => {
+        const { ok } = get(result, 'data', {});
 
         if (!ok) {
-          return onError(res);
+          return onError(result);
         }
 
-        return this.uploadFile(file, res.data);
+        return this.uploadFile(file, result.data);
       })
-      .catch(err => onError(err));
+      .catch(error => onError(error));
   }
 
   uploadFile = (file, signingResult) => {
@@ -52,12 +53,12 @@ class ReactS3Uploader extends Component {
 
     return axios.put(signedUrl, file, { headers: uploadUrlHeaders })
       .then(() => onFinish(signingResult))
-      .catch(err => onError(err));
+      .catch(error => onError(error));
   }
 
   handleUpload = () => {
     const { preprocess } = this.props;
-    const files = this.input && this.input.files || [];
+    const files = get(this, 'input.files', []);
 
     if (files.length === 1) {
       preprocess(files[0], this.getSigningUrl);
